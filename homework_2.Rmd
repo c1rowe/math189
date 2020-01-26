@@ -76,8 +76,6 @@ hist(dat$year[index1], main="Histogram of Year, before 1970", xlab="Year Sighted
 hist(dat$year[index2], main="Histogram of Year, 1971 - 1990", xlab="Year Sighted")
 hist(dat$year[index3], main="Histogram of Year, after 1991", xlab="Year Sighted")
 
-plot(density(dat$year), main="Density of Reports by Year", xlab="Year Sighted")
-
 hist(dat$latitude[index1], main="Histogram of Latitude, before 1970", xlab="Latitude")
 hist(dat$latitude[index2], main="Histogram of Latitude, 1971 - 1990", xlab="Latitude")
 hist(dat$latitude[index3], main="Histogram of Latitude, after 1991", xlab="Latitude")
@@ -116,6 +114,11 @@ boxplot(longitude~category, data=dat, main="Boxplot of Longitude", xlab="Time Pe
 
 boxplot(duration..seconds.~category, data=durationdat, main="Boxplot of Duration of Sighting",
         xlab="Time Period", ylab="Duration (seconds)")
+dev.off()
+
+#pdf for year density
+pdf("continuous_2.pdf", width=6,height=6)
+plot(density(dat$year), main="Density of Reports by Year", xlab="Year Sighted", xlim=c(1940,2020))
 dev.off()
 ```
 ```{r}
