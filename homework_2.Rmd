@@ -1,0 +1,155 @@
+---
+title: "R Notebook"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+```{r}
+#setup
+getwd()
+setwd("/Users/Me/Documents/Datascience/Rowe/UFOs")
+
+require(devtools)
+require(table1)
+require(plyr)
+```
+
+```{r}
+dat = read.csv("clean.csv")
+```
+
+```{r}
+dat$category <- -1
+dat[dat$year <= 1970, "category"] <- "Before 1970"
+dat[dat$year <= 1990 & dat$year > 1970, "category"] <- "1971 - 1990"
+dat[dat$year <= 2020 & dat$year > 1990, "category"] <- "After 1991"
+```
+
+```{r}
+dat$category <- factor(dat$category)
+
+# use the top 5 most freq cities
+dat$city <- factor(dat$city, levels=c("seattle","phoenix","portland","las vegas", "los angeles"),
+                   labels=c("Seattle","Phoenix","Portland","Las Vegas", "Los Angeles"))
+dat$city <- factor(dat$city, levels=c("Seattle","Phoenix","Portland","Las Vegas", "Los Angeles", "Missing"),
+                   labels=c("Seattle","Phoenix","Portland","Las Vegas", "Los Angeles", "Other"))
+# top 5 most freq states
+dat$state <- factor(dat$state, levels=c("ca","wa","fl","tx","ny"),
+                    labels=c("California","Washington","Florida","Texas","New York"))
+dat$country <- factor(dat$country, levels=c("us","ca","gb","au","de"),
+                      labels=c("United States","Canada","Great Britain","Australia","Germany"))
+# top 5
+dat$shape <- factor(dat$shape, levels=c("light","triangle","circle","fireball","other"),
+                    labels=c("Light","Triangle","Circle","Fireball","Other"))
+
+
+label(dat$city) <- "City of Sighting"
+label(dat$country) <- "Country of Sighting"
+label(dat$state) <- "US/Canadian State of Sighting"
+label(dat$shape) <- "Shape of Sighted UFO"
+label(dat$duration..seconds.) <- "Duration of Sighting"
+label(dat$latitude) <- "Latitude of Sighting Location"
+label(dat$longitude) <- "Longitude of Sighting Location"
+label(dat$year) <- "Year of Sighting"
+
+#last table1
+table1(~ state + country + shape + duration..seconds. + 
+         latitude + longitude + year| category, data=dat,
+       footnote="For state, country, and shape, the top 5 categories
+       are displayed. Samples from other categories are represented
+       by 'Missing'")
+```
+
+```{r}
+index1 <- which(dat$category == "Before 1970")
+index2 <- which(dat$category == "1971 - 1990")
+index3 <- which(dat$category == "After 1991")
+
+#truncating duration because of extremely high outliers
+durationdat <- subset(dat, duration..seconds. < 4000)
+
+#continuous/discrete variables
+pdf("continuous_2.pdf", width=7,height=3)
+par(mfrow=c(1,3))
+hist(dat$year[index1], main="Histogram of Year, before 1970", xlab="Year Sighted")
+hist(dat$year[index2], main="Histogram of Year, 1971 - 1990", xlab="Year Sighted")
+hist(dat$year[index3], main="Histogram of Year, after 1991", xlab="Year Sighted")
+
+plot(density(dat$year[index1]), main="Year Density, before 1970", xlab="Year Sighted")
+plot(density(dat$year[index2]), main="Year Density, 1971 - 1990", xlab="Year Sighted")
+plot(density(dat$year[index3]), main="Year Density, after 1991", xlab="Year Sighted")
+
+hist(dat$latitude[index1], main="Histogram of Latitude, before 1970", xlab="Latitude")
+hist(dat$latitude[index2], main="Histogram of Latitude, 1971 - 1990", xlab="Latitude")
+hist(dat$latitude[index3], main="Histogram of Latitude, after 1991", xlab="Latitude")
+
+plot(density(dat$latitude[index1]), main="Latitude Density, before 1970", xlab="Latitude")
+plot(density(dat$latitude[index2]), main="Latitude Density, 1971 - 1990", xlab="Latitude")
+plot(density(dat$latitude[index3]), main="Latitude Density, after 1991", xlab="Latitude")
+
+hist(dat$longitude[index1], main="Histogram of Longitude, before 1970", xlab="Longitude")
+hist(dat$longitude[index2], main="Histogram of Longitude, 1971 - 1990", xlab="Longitude")
+hist(dat$longitude[index3], main="Histogram of Longitude, after 1991", xlab="Longitude")
+
+plot(density(dat$longitude[index1]), main="Longitude Density, before 1970", xlab="Longitude")
+plot(density(dat$longitude[index2]), main="Longitude Density, 1971 - 1990", xlab="Longitude")
+plot(density(dat$longitude[index3]), main="Longitude Density, after 1991", xlab="Longitude")
+
+hist(durationdat$duration..seconds.[index1], main="Histogram of Duration, before 1970",
+     xlab="Duration of Sighting")
+hist(durationdat$duration..seconds.[index2], main="Histogram of Duration, 1971-1990",
+     xlab="Duration of Sighting")
+hist(durationdat$duration..seconds.[index3], main="Histogram of Duration, after 1991",
+     xlab="Duration of Sighting")
+
+plot(density(durationdat$duration..seconds.[index1], na.rm=TRUE), main="Duration Density, before 1970",
+     xlab="Duration of Sighting")
+plot(density(durationdat$duration..seconds.[index2], na.rm=TRUE), main="Duration Density, 1971-1990",
+     xlab="Duration of Sighting")
+plot(density(durationdat$duration..seconds.[index3], na.rm=TRUE), main="Duration Density, after 1991",
+     xlab="Duration of Sighting")
+
+boxplot(year~category, data=dat, main="Boxplot of Year Sighted", xlab="Time Period")
+
+boxplot(latitude~category, data=dat, main="Boxplot of Latitude", xlab="Time Period")
+
+boxplot(longitude~category, data=dat, main="Boxplot of Longitude", xlab="Time Period")
+
+boxplot(duration..seconds.~category, data=durationdat, main="Boxplot of Duration of Sighting",
+        xlab="Time Period", ylab="Duration (seconds)")
+dev.off()
+```
+```{r}
+# plotting categorical vars
+# states first
+statecounts <- table(dat$state, dat$category)
+countrycounts <- table(dat$country, dat$category)
+shapecounts <- table(dat$shape, dat$category)
+
+pdf("categorical_2.pdf",width=7,height=3)
+par(mfrow=c(1,3))
+barplot(statecounts[,"Before 1970"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(statecounts), main="Sightings by Top 5 States, Before 1970")
+barplot(statecounts[,"1971 - 1990"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(statecounts), main="Sightings by Top 5 States, 1971 - 1990")
+barplot(statecounts[,"After 1991"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(statecounts), main="Sightings by Top 5 States, After 1991")
+
+barplot(countrycounts[,"Before 1970"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(countrycounts), main="Sightings by Top 5 Countries, Before 1970")
+barplot(countrycounts[,"1971 - 1990"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(countrycounts), main="Sightings by Top 5 Countries, 1971 - 1990")
+barplot(countrycounts[,"After 1991"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(countrycounts), main="Sightings by Top 5 Countries, After 1991")
+
+barplot(shapecounts[,"Before 1970"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(shapecounts), main="Top 5 Sighted Shapes, Before 1970")
+barplot(shapecounts[,"1971 - 1990"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(shapecounts), main="Top 5 Sighted Shapes, 1971 - 1990")
+barplot(shapecounts[,"After 1991"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
+        legend=rownames(shapecounts), main="Top 5 Sighted Shapes, After 1991")
+dev.off()
+```
+
+
