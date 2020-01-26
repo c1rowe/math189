@@ -13,6 +13,7 @@ setwd("/Users/Me/Documents/MATH 189/math189")
 require(devtools)
 require(table1)
 require(plyr)
+require(RColorBrewer)
 ```
 
 ```{r}
@@ -70,7 +71,7 @@ index3 <- which(dat$category == "After 1991")
 durationdat <- subset(dat, duration..seconds. < 4000)
 
 #continuous/discrete variables
-pdf("continuous_2.pdf", width=7,height=3)
+pdf("continuous_1.pdf", width=9,height=3)
 par(mfrow=c(1,3))
 hist(dat$year[index1], main="Histogram of Year, before 1970", xlab="Year Sighted")
 hist(dat$year[index2], main="Histogram of Year, 1971 - 1990", xlab="Year Sighted")
@@ -79,10 +80,6 @@ hist(dat$year[index3], main="Histogram of Year, after 1991", xlab="Year Sighted"
 hist(dat$latitude[index1], main="Histogram of Latitude, before 1970", xlab="Latitude")
 hist(dat$latitude[index2], main="Histogram of Latitude, 1971 - 1990", xlab="Latitude")
 hist(dat$latitude[index3], main="Histogram of Latitude, after 1991", xlab="Latitude")
-
-plot(density(dat$latitude[index1]), main="Latitude Density, before 1970", xlab="Latitude")
-plot(density(dat$latitude[index2]), main="Latitude Density, 1971 - 1990", xlab="Latitude")
-plot(density(dat$latitude[index3]), main="Latitude Density, after 1991", xlab="Latitude")
 
 hist(dat$longitude[index1], main="Histogram of Longitude, before 1970", xlab="Longitude")
 hist(dat$longitude[index2], main="Histogram of Longitude, 1971 - 1990", xlab="Longitude")
@@ -116,9 +113,16 @@ boxplot(duration..seconds.~category, data=durationdat, main="Boxplot of Duration
         xlab="Time Period", ylab="Duration (seconds)")
 dev.off()
 
-#pdf for year density
+#pdf for single-plot continuous vars
 pdf("continuous_2.pdf", width=6,height=6)
 plot(density(dat$year), main="Density of Reports by Year", xlab="Year Sighted", xlim=c(1940,2020))
+
+plot(density(dat$latitude[index1]), main="Density of Latitudes", xlab="Latitude", 
+     col=rgb(0.9,0,0.1,1), ylim=c(0,0.55))
+lines(density(dat$latitude[index2]), col=rgb(0.5,0,0.5,1))
+lines(density(dat$latitude[index3]), col=rgb(0.1,0,0.9,1))
+legend("topright", c("Before 1970","1971-1990","After 1990"), 
+       fill=c(col=rgb(0.9,0,0.1,1), col=rgb(0.5,0,0.5,1), col=rgb(0.1,0,0.9,1)))
 dev.off()
 ```
 ```{r}
