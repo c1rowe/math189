@@ -8,7 +8,7 @@ output:
 ```{r}
 #setup
 getwd()
-setwd("/Users/Me/Documents/Datascience/Rowe/UFOs")
+setwd("/Users/Me/Documents/MATH 189/math189")
 
 require(devtools)
 require(table1)
