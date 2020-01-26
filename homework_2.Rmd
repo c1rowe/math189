@@ -76,9 +76,7 @@ hist(dat$year[index1], main="Histogram of Year, before 1970", xlab="Year Sighted
 hist(dat$year[index2], main="Histogram of Year, 1971 - 1990", xlab="Year Sighted")
 hist(dat$year[index3], main="Histogram of Year, after 1991", xlab="Year Sighted")
 
-plot(density(dat$year[index1]), main="Year Density, before 1970", xlab="Year Sighted")
-plot(density(dat$year[index2]), main="Year Density, 1971 - 1990", xlab="Year Sighted")
-plot(density(dat$year[index3]), main="Year Density, after 1991", xlab="Year Sighted")
+plot(density(dat$year), main="Density of Reports by Year", xlab="Year Sighted")
 
 hist(dat$latitude[index1], main="Histogram of Latitude, before 1970", xlab="Latitude")
 hist(dat$latitude[index2], main="Histogram of Latitude, 1971 - 1990", xlab="Latitude")
