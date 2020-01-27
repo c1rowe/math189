@@ -85,22 +85,11 @@ hist(dat$longitude[index1], main="Histogram of Longitude, before 1970", xlab="Lo
 hist(dat$longitude[index2], main="Histogram of Longitude, 1971 - 1990", xlab="Longitude")
 hist(dat$longitude[index3], main="Histogram of Longitude, after 1991", xlab="Longitude")
 
-plot(density(dat$longitude[index1]), main="Longitude Density, before 1970", xlab="Longitude")
-plot(density(dat$longitude[index2]), main="Longitude Density, 1971 - 1990", xlab="Longitude")
-plot(density(dat$longitude[index3]), main="Longitude Density, after 1991", xlab="Longitude")
-
 hist(durationdat$duration..seconds.[index1], main="Histogram of Duration, before 1970",
      xlab="Duration of Sighting")
 hist(durationdat$duration..seconds.[index2], main="Histogram of Duration, 1971-1990",
      xlab="Duration of Sighting")
 hist(durationdat$duration..seconds.[index3], main="Histogram of Duration, after 1991",
-     xlab="Duration of Sighting")
-
-plot(density(durationdat$duration..seconds.[index1], na.rm=TRUE), main="Duration Density, before 1970",
-     xlab="Duration of Sighting")
-plot(density(durationdat$duration..seconds.[index2], na.rm=TRUE), main="Duration Density, 1971-1990",
-     xlab="Duration of Sighting")
-plot(density(durationdat$duration..seconds.[index3], na.rm=TRUE), main="Duration Density, after 1991",
      xlab="Duration of Sighting")
 
 boxplot(year~category, data=dat, main="Boxplot of Year Sighted", xlab="Time Period")
@@ -122,7 +111,30 @@ plot(density(dat$latitude[index1]), main="Density of Latitudes", xlab="Latitude"
 lines(density(dat$latitude[index2]), col=rgb(0.5,0,0.5,1))
 lines(density(dat$latitude[index3]), col=rgb(0.1,0,0.9,1))
 legend("topright", c("Before 1970","1971-1990","After 1990"), 
-       fill=c(col=rgb(0.9,0,0.1,1), col=rgb(0.5,0,0.5,1), col=rgb(0.1,0,0.9,1)))
+       fill=c(rgb(0.9,0,0.1,1), rgb(0.5,0,0.5,1), rgb(0.1,0,0.9,1)))
+
+#zoomed in
+plot(density(dat$latitude[index1]), main="Density of Latitudes", xlab="Latitude", 
+     col=rgb(0.9,0,0.1,1), ylim=c(0,0.55), xlim=c(15,60))
+lines(density(dat$latitude[index2]), col=rgb(0.5,0,0.5,1))
+lines(density(dat$latitude[index3]), col=rgb(0.1,0,0.9,1))
+legend("topright", c("Before 1970","1971-1990","After 1990"), 
+       fill=c(rgb(0.9,0,0.1,1), rgb(0.5,0,0.5,1), rgb(0.1,0,0.9,1)))
+
+plot(density(dat$longitude[index1]), main="Density of Longitudes", xlab="Longitude", 
+     col=rgb(0.9,0,0.1,1), ylim=c(0,0.55))
+lines(density(dat$longitude[index2]), col=rgb(0.5,0,0.5,1))
+lines(density(dat$longitude[index3]), col=rgb(0.1,0,0.9,1))
+legend("topright", c("Before 1970","1971-1990","After 1990"), 
+       fill=c(rgb(0.9,0,0.1,1), rgb(0.5,0,0.5,1), rgb(0.1,0,0.9,1)))
+
+plot(density(durationdat$duration..seconds.[index1], na.rm=TRUE), main="Density of Sighting Duration",
+     xlab="Duration of Sighting", col=rgb(0.9,0,0.1,1), ylim=c(0,0.0038))
+lines(density(durationdat$duration..seconds.[index2], na.rm=TRUE), col=rgb(0.5,0,0.5,1))
+lines(density(durationdat$duration..seconds.[index3], na.rm=TRUE), col=rgb(0.1,0,0.9,1))
+legend("topright", c("Before 1970","1971-1990","After 1990"),
+       fill=c(rgb(0.9,0,0.1,1), rgb(0.5,0,0.5,1), rgb(0.1,0,0.9,1)))
+
 dev.off()
 ```
 ```{r}
@@ -132,7 +144,7 @@ statecounts <- table(dat$state, dat$category)
 countrycounts <- table(dat$country, dat$category)
 shapecounts <- table(dat$shape, dat$category)
 
-pdf("categorical_2.pdf",width=7,height=3)
+pdf("categorical_2.pdf",width=9,height=3)
 par(mfrow=c(1,3))
 barplot(statecounts[,"Before 1970"], beside=TRUE, col=c("green","red","blue","yellow","orange"),
         legend=rownames(statecounts), main="Sightings by Top 5 States, Before 1970")
